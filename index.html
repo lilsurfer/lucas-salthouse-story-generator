@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The LUCAS SALTHOUSE Story Generator | Mad-Libs Style Adventure Machine</title>
+  <meta name="description" content="Enter your favorite adjectives, verbs, and nouns to generate an epic, hilarious adventure starring LUCAS SALTHOUSE.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0f141c;
+      --card-bg: #18202c;
+      --card-border: #283548;
+      --input-bg: #121824;
+      --input-border: #33445c;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --accent-glow: rgba(245, 158, 11, 0.25);
+      --lucas-color: #fbbf24;
+      --lucas-bg: rgba(251, 191, 36, 0.15);
+      --lucas-border: #f59e0b;
+      
+      --tag-adj-bg: rgba(245, 158, 11, 0.18);
+      --tag-adj-text: #fcd34d;
+      --tag-verb-bg: rgba(16, 185, 129, 0.18);
+      --tag-verb-text: #6ee7b7;
+      --tag-noun-bg: rgba(59, 130, 246, 0.18);
+      --tag-noun-text: #93c5fd;
+      --tag-place-bg: rgba(168, 85, 247, 0.18);
+      --tag-place-text: #d8b4fe;
+      --tag-misc-bg: rgba(244, 63, 94, 0.18);
+      --tag-misc-text: #fda4af;
+
+      --story-paper: #1c2433;
+      --story-border: #384961;
+      --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-heading: 'Cinzel', Georgia, serif;
+      --font-story: 'Lora', Georgia, serif;
+      --radius: 12px;
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    [data-theme="parchment"] {
+      --bg: #f5efe6;
+      --card-bg: #ffffff;
+      --card-border: #e2d7c5;
+      --input-bg: #faf6f0;
+      --input-border: #d4c5af;
+      --text: #26211c;
+      --text-muted: #6b6357;
+      --accent: #b45309;
+      --accent-hover: #92400e;
+      --accent-glow: rgba(180, 83, 9, 0.2);
+      --lucas-color: #92400e;
+      --lucas-bg: rgba(180, 83, 9, 0.12);
+      --lucas-border: #b45309;
+
+      --tag-adj-bg: rgba(217, 119, 6, 0.15);
+      --tag-adj-text: #92400e;
+      --tag-verb-bg: rgba(5, 150, 105, 0.15);
+      --tag-verb-text: #065f46;
+      --tag-noun-bg: rgba(37, 99, 235, 0.15);
+      --tag-noun-text: #1e40af;
+      --tag-place-bg: rgba(147, 51, 234, 0.15);
+      --tag-place-text: #6b21a8;
+      --tag-misc-bg: rgba(225, 29, 72, 0.15);
+      --tag-misc-text: #9f1239;
+
+      --story-paper: #fffdf9;
+      --story-border: #d8c8b0;
+      --shadow-sm: 0 2px 6px rgba(60, 40, 20, 0.06);
+      --shadow-lg: 0 12px 32px rgba(60, 40, 20, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 60px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Top Navigation bar */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 30px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      font-size: 1.25rem;
+      color: var(--text);
+    }
+
+    .brand-badge {
+      background: var(--accent);
+      color: #000;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-icon {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* Hero header */
+    .hero {
+      text-align: center;
+      padding: 24px 0 36px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hero-eyebrow strong {
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-name-highlight {
+      display: inline-block;
+      color: var(--accent);
+      text-shadow: 0 0 24px var(--accent-glow);
+      position: relative;
+    }
+
+    .hero p {
+      max-width: 640px;
+      margin: 0 auto;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    /* Story Selector Tabs */
+    .genre-selector {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .genre-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+
+    .genre-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .genre-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .genre-card.active {
+      border-color: var(--accent);
+      background: var(--input-bg);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    .genre-icon {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .genre-name {
+      font-weight: 700;
+      font-size: 0.92rem;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .genre-tag {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    /* Generator layout: Form & Controls */
+    .generator-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 30px;
+    }
+
+    .toolbar-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 18px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .completion-tracker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .progress-bar-bg {
+      width: 140px;
+      height: 8px;
+      background: var(--input-bg);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .toolbar-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-secondary {
+      background: var(--input-bg);
+      border-color: var(--card-border);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      border-color: var(--accent);
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-lg {
+      padding: 14px 28px;
+      font-size: 1.05rem;
+    }
+
+    /* Word Inputs Grid */
+    .categories-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .category-group-header {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .category-pill {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .pill-adj { background: var(--tag-adj-bg); color: var(--tag-adj-text); }
+    .pill-verb { background: var(--tag-verb-bg); color: var(--tag-verb-text); }
+    .pill-noun { background: var(--tag-noun-bg); color: var(--tag-noun-text); }
+    .pill-misc { background: var(--tag-misc-bg); color: var(--tag-misc-text); }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .field-card {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .field-card:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    .field-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .field-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .field-random-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .field-random-btn:hover {
+      color: var(--accent);
+      transform: rotate(25deg);
+    }
+
+    .field-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .field-input::placeholder {
+      color: var(--text-muted);
+      opacity: 0.5;
+      font-style: italic;
+    }
+
+    /* Fixed Protagonist Note */
+    .protagonist-notice {
+      background: var(--lucas-bg);
+      border: 1px solid var(--lucas-border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .protagonist-notice-text {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .protagonist-notice-icon {
+      font-size: 1.5rem;
+    }
+
+    .protagonist-badge-inline {
+      font-family: var(--font-heading);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: var(--lucas-color);
+      background: var(--card-bg);
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--lucas-border);
+    }
+
+    /* Story Output Presentation Card */
+    .story-section {
+      display: none;
+      margin-top: 36px;
+      scroll-margin-top: 20px;
+    }
+
+    .story-section.visible {
+      display: block;
+      animation: fadeInStory 0.5s ease-out;
+    }
+
+    @keyframes fadeInStory {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .story-parchment {
+      background: var(--story-paper);
+      border: 2px solid var(--story-border);
+      border-radius: var(--radius);
+      padding: clamp(24px, 5vw, 48px);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .story-parchment::before {
+      content: "";
+      position: absolute;
+      top: 6px; left: 6px; right: 6px; bottom: 6px;
+      border: 1px solid var(--card-border);
+      border-radius: calc(var(--radius) - 4px);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .story-header {
+      text-align: center;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+      border-bottom: 2px dashed var(--story-border);
+    }
+
+    .story-stamp {
+      display: inline-block;
+      font-family: var(--font-heading);
+      font-size: 0.78rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      padding: 4px 14px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+
+    .story-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.25;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .story-meta {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .story-body {
+      font-family: var(--font-story);
+      font-size: clamp(1.05rem, 2vw, 1.22rem);
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 30px;
+    }
+
+    .story-body p {
+      margin-bottom: 1.3em;
+      text-indent: 1.5em;
+    }
+
+    .story-body p:first-of-type {
+      text-indent: 0;
+    }
+
+    .story-body p:first-of-type::first-letter {
+      font-family: var(--font-heading);
+      font-size: 3.2em;
+      float: left;
+      line-height: 0.8;
+      margin: 0.1em 0.15em 0 0;
+      color: var(--accent);
+      font-weight: 900;
+    }
+
+    /* Protagonist styling in story: Always prominent, ALWAYS capitalized */
+    .protagonist-word {
+      display: inline-block;
+      font-family: var(--font-heading);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: var(--lucas-color);
+      background: var(--lucas-bg);
+      border-bottom: 2px solid var(--lucas-border);
+      padding: 0 5px;
+      border-radius: 4px;
+      text-transform: uppercase !important;
+    }
+
+    /* User Inserted Words */
+    .user-word {
+      display: inline-block;
+      font-weight: 600;
+      padding: 0 4px;
+      border-radius: 4px;
+      position: relative;
+      cursor: help;
+      transition: all 0.15s ease;
+    }
+
+    .user-word:hover {
+      transform: scale(1.05);
+    }
+
+    .user-word.type-adj {
+      background: var(--tag-adj-bg);
+      color: var(--tag-adj-text);
+      border-bottom: 1.5px dashed var(--accent);
+    }
+
+    .user-word.type-verb {
+      background: var(--tag-verb-bg);
+      color: var(--tag-verb-text);
+      border-bottom: 1.5px dashed #10b981;
+    }
+
+    .user-word.type-noun {
+      background: var(--tag-noun-bg);
+      color: var(--tag-noun-text);
+      border-bottom: 1.5px dashed #3b82f6;
+    }
+
+    .user-word.type-misc {
+      background: var(--tag-misc-bg);
+      color: var(--tag-misc-text);
+      border-bottom: 1.5px dashed #f43f5e;
+    }
+
+    /* Clean mode: when user disables badges */
+    .plain-reading-mode .user-word {
+      background: transparent !important;
+      color: inherit !important;
+      border-bottom: none !important;
+      font-weight: inherit !important;
+      padding: 0 !important;
+    }
+
+    /* Floating tooltip for user word */
+    .word-tooltip {
+      position: fixed;
+      background: #000;
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      border: 1px solid #444;
+      display: none;
+      font-weight: 600;
+    }
+
+    /* Story Action Toolbar */
+    .story-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid var(--story-border);
+    }
+
+    .story-actions-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* Speech synthesis audio playing bar */
+    .tts-controls {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: var(--input-bg);
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      font-size: 0.85rem;
+    }
+
+    .tts-controls.active {
+      display: inline-flex;
+    }
+
+    .sound-pulse {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulseGreen 1.2s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.4); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.6; }
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 24px;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10000;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+      }
+      .top-nav, .hero, .genre-selector, .generator-panel, .story-actions, footer, .toast, #confetti-canvas {
+        display: none !important;
+      }
+      .story-section {
+        display: block !important;
+        margin: 0 !important;
+      }
+      .story-parchment {
+        background: #fff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      .story-parchment::before {
+        display: none !important;
+      }
+      .protagonist-word {
+        color: #000 !important;
+        background: none !important;
+        border-bottom: 2px solid #000 !important;
+      }
+      .user-word {
+        background: none !important;
+        color: #000 !important;
+        border-bottom: 1px dashed #666 !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .generator-panel {
+        padding: 16px;
+      }
+      .fields-grid {
+        grid-template-columns: 1fr;
+      }
+      .story-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .story-actions-group {
+        justify-content: stretch;
+      }
+      .story-actions-group .btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+  <div id="word-tooltip" class="word-tooltip"></div>
+
+  <div class="container">
+    <!-- Top Navigation -->
+    <header class="top-nav">
+      <div class="brand-logo">
+        <span>📜 Story Forge</span>
+        <span class="brand-badge">Lucas Edition</span>
+      </div>
+      <div class="nav-actions">
+        <button id="toggle-theme-btn" class="btn-icon" title="Toggle Theme (Parchment / Midnight)" aria-label="Toggle Theme">
+          🌓
+        </button>
+        <button id="toggle-sound-btn" class="btn-icon" title="Toggle Sound Effects" aria-label="Toggle Sound Effects">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Header -->
+    <section class="hero">
+      <div class="hero-eyebrow">
+        <span>Inspired by letter-generator.org.uk</span>
+        <span>•</span>
+        <strong>Starring LUCAS SALTHOUSE</strong>
+      </div>
+      <h1>
+        The <span class="hero-name-highlight">LUCAS SALTHOUSE</span><br>
+        Story Generator
+      </h1>
+      <p>
+        Supply your wild adjectives, frantic verbs, and bizarre nouns below. 
+        Our narrative algorithm will weave an unforgettable adventure featuring the one and only 
+        <strong>LUCAS SALTHOUSE</strong> in bold glorious all-caps!
+      </p>
+    </section>
+
+    <!-- Story Genre Selection -->
+    <section class="genre-selector">
+      <div class="section-title">
+        <span>1. Select an Adventure Genre</span>
+        <span id="genre-counter">6 Unique Storylines Available</span>
+      </div>
+      <div class="genre-grid" id="genre-container">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- Generator Panel -->
+    <main class="generator-panel">
+      <!-- Toolbar -->
+      <div class="toolbar-bar">
+        <div class="completion-tracker">
+          <span>Words Entered:</span>
+          <div class="progress-bar-bg">
+            <div id="progress-bar" class="progress-bar-fill"></div>
+          </div>
+          <strong id="progress-text">0 / 15</strong>
+        </div>
+
+        <div class="toolbar-buttons">
+          <button id="btn-randomize-all" class="btn btn-secondary" title="Auto-fill all empty fields with hilarious words">
+            🎲 Randomize All Words
+          </button>
+          <button id="btn-clear-all" class="btn btn-secondary" title="Clear all fields">
+            🧹 Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Input Categories -->
+      <form id="words-form" onsubmit="event.preventDefault(); generateStory();">
+        <div class="categories-accordion">
+          
+          <!-- Category 1: Descriptors & Adjectives -->
+          <div class="category-group">
+            <div class="category-group-header">
+              <span class="category-pill pill-adj">Adjectives</span>
+              <span>Describing Words (Sensory, Silly, or Dramatic)</span>
+            </div>
+            <div class="fields-grid">
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="adj1" class="field-label">Adjective (Wild / Absurd)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('adj1')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="adj1" class="field-input" placeholder="e.g. slimy, fluorescent, bamboozled" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="adj2" class="field-label">Adjective (Texture / Quality)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('adj2')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="adj2" class="field-input" placeholder="e.g. squelching, razor-sharp, velvet" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="adj3" class="field-label">Adjective (Epic / Heroic)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('adj3')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="adj3" class="field-input" placeholder="e.g. magnificent, unstoppable, supreme" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category 2: Actions & Verbs -->
+          <div class="category-group">
+            <div class="category-group-header">
+              <span class="category-pill pill-verb">Verbs</span>
+              <span>Actions & Maneuvers</span>
+            </div>
+            <div class="fields-grid">
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="verb_past1" class="field-label">Verb (Past Tense - Movement)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('verb_past1')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="verb_past1" class="field-input" placeholder="e.g. cartwheeled, belly-flopped, vaulted" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="verb_past2" class="field-label">Verb (Past Tense - Dramatic)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('verb_past2')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="verb_past2" class="field-input" placeholder="e.g. kung-fu kicked, serenaded, chucked" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="verb_ing1" class="field-label">Verb Ending in -ING (Frantic)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('verb_ing1')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="verb_ing1" class="field-input" placeholder="e.g. yodeling, speed-walking, levitating" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="verb_ing2" class="field-label">Verb Ending in -ING (Triumphant)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('verb_ing2')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="verb_ing2" class="field-input" placeholder="e.g. moonwalking, conga-lining, sashaying" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category 3: Nouns & Objects -->
+          <div class="category-group">
+            <div class="category-group-header">
+              <span class="category-pill pill-noun">Nouns</span>
+              <span>Objects, Items & Swarms</span>
+            </div>
+            <div class="fields-grid">
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="noun_singular1" class="field-label">Noun (Ridiculous Object)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('noun_singular1')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="noun_singular1" class="field-input" placeholder="e.g. rubber chicken, titanium spatula" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="noun_singular2" class="field-label">Noun (Priceless / Bizarre Item)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('noun_singular2')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="noun_singular2" class="field-input" placeholder="e.g. cursed garden gnome, disco ball" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="noun_plural1" class="field-label">Plural Noun (Swarm / Mob)</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('noun_plural1')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="noun_plural1" class="field-input" placeholder="e.g. combat squirrels, flying pancakes" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category 4: Setting, Food, Anatomy & Sound -->
+          <div class="category-group">
+            <div class="category-group-header">
+              <span class="category-pill pill-misc">Setting & Flair</span>
+              <span>Places, Snacks, Anatomy & Shouts</span>
+            </div>
+            <div class="fields-grid">
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="place1" class="field-label">Place / Setting</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('place1')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="place1" class="field-input" placeholder="e.g. the Tesco car park, a secret volcano lair" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="food1" class="field-label">Food or Beverage</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('food1')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="food1" class="field-input" placeholder="e.g. lukewarm baked beans, pickle juice" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="body_part" class="field-label">Body Part</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('body_part')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="body_part" class="field-input" placeholder="e.g. left nostril, majestic chin, elbow" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="animal" class="field-label">Animal / Creature</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('animal')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="animal" class="field-input" placeholder="e.g. screaming possum, disco pigeon, alpaca" required>
+              </div>
+
+              <div class="field-card">
+                <div class="field-label-row">
+                  <label for="exclamation1" class="field-label">Dramatic Exclamation</label>
+                  <button type="button" class="field-random-btn" onclick="randomizeSingleField('exclamation1')" title="Suggest a word">🎲</button>
+                </div>
+                <input type="text" id="exclamation1" class="field-input" placeholder="e.g. Holy guacamole!, Great Scott!" required>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Protagonist Banner -->
+        <div class="protagonist-notice">
+          <div class="protagonist-notice-text">
+            <span class="protagonist-notice-icon">👑</span>
+            <div>
+              <strong>Designated Protagonist:</strong>
+              <div style="font-size:0.85rem; color:var(--text-muted)">
+                This role is permanently locked to one world-renowned individual:
+              </div>
+            </div>
+          </div>
+          <div class="protagonist-badge-inline">
+            LUCAS SALTHOUSE
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div style="text-align: center; margin-top: 28px;">
+          <button type="submit" class="btn btn-primary btn-lg" id="generate-btn">
+            ⚡ Generate Story About LUCAS SALTHOUSE
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <!-- Story Output Card -->
+    <section id="story-output" class="story-section">
+      <div class="story-parchment" id="story-parchment-content">
+        <div class="story-header">
+          <div class="story-stamp">OFFICIAL CHRONICLE • STARRING LUCAS SALTHOUSE</div>
+          <h2 class="story-title" id="story-rendered-title">The Legend of LUCAS SALTHOUSE</h2>
+          <div class="story-meta">
+            Chronicle recorded on <span id="story-date"></span> • Certified 100% Authentic
+          </div>
+        </div>
+
+        <div class="story-body" id="story-rendered-body">
+          <!-- Story paragraphs generated here -->
+        </div>
+
+        <div class="story-actions">
+          <div class="story-actions-group">
+            <button class="btn btn-secondary" onclick="togglePlainReadingMode()" id="toggle-highlights-btn" title="Toggle colored badges">
+              🎨 Toggle Highlights
+            </button>
+            <button class="btn btn-secondary" onclick="copyStoryText()" id="copy-btn">
+              📋 Copy Story
+            </button>
+            <button class="btn btn-secondary" onclick="downloadStoryFile()">
+              💾 Download (.txt)
+            </button>
+            <button class="btn btn-secondary" onclick="window.print()">
+              🖨️ Print
+            </button>
+          </div>
+
+          <div class="story-actions-group">
+            <button class="btn btn-secondary" onclick="toggleReadAloud()" id="tts-btn">
+              🔊 Read Aloud
+            </button>
+            <div id="tts-status" class="tts-controls">
+              <span class="sound-pulse"></span>
+              <span id="tts-label">Narrating...</span>
+              <button onclick="stopSpeech()" style="background:none; border:none; color:var(--accent); cursor:pointer; font-weight:bold; margin-left:6px;">Stop</button>
+            </div>
+            <button class="btn btn-primary" onclick="scrollToInputs()">
+              ✏️ Tweak Words
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>
+        The <strong>LUCAS SALTHOUSE</strong> Story Generator • Built in homage to the great British letter and mad-libs generators.
+      </p>
+      <p style="margin-top: 6px; font-size: 0.8rem;">
+        Protagonist name guarantee: Every occurrence strictly preserved as <strong>LUCAS SALTHOUSE</strong>.
+      </p>
+    </footer>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast">
+    <span id="toast-icon">✨</span>
+    <span id="toast-msg">Notification</span>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. DATA BANK & TEMPLATES
+       ========================================================================== */
+
+    const PROTAGONIST = "LUCAS SALTHOUSE";
+
+    // Vast bank of hilarious word suggestions
+    const WORD_BANK = {
+      adj1: [
+        "slimy", "radioactive", "bamboozled", "sparkly", "colossal",
+        "rambunctious", "neon-pink", "crusty", "majestic", "flamboyant",
+        "suspicious", "bouncy", "microscopic", "hyperactive", "moldy",
+        "bewildered", "glittering", "sarcastic", "jittery", "thunderous"
+      ],
+      adj2: [
+        "squelching", "razor-sharp", "gelatinous", "vibrating", "velvet-lined",
+        "cursed", "supersonic", "greasy", "golden", "combustible",
+        "fragrant", "wobbly", "electrified", "feather-light", "gooey",
+        "rusty", "rubbery", "steaming", "slippery", "crunchy"
+      ],
+      adj3: [
+        "magnificent", "unstoppable", "supreme", "legendary", "immortal",
+        "astronomically clumsy", "utterly bewildering", "breathtakingly bizarre",
+        "earth-shattering", "jaw-dropping", "incomparable", "fearless"
+      ],
+      verb_past1: [
+        "cartwheeled", "belly-flopped", "somersaulted", "vaulted", "teleported",
+        "swan-dived", "moonwalked", "slithered", "catapulted", "galloped",
+        "paraglided", "backflipped", "scuttled", "stampeded", "sprinted"
+      ],
+      verb_past2: [
+        "kung-fu kicked", "serenaded", "disco-danced", "chucked", "detonated",
+        "high-fived", "booped", "juggled", "microwaved", "vacuumed",
+        "aggressively unboxed", "catapulted", "baptized", "defused"
+      ],
+      verb_ing1: [
+        "yodeling", "frantic speed-walking", "aggressive breakdancing",
+        "levitating", "cackling maniacally", "turbo-scootering", "flailing",
+        "furiously knitting", "synchronized swimming", "somersaulting"
+      ],
+      verb_ing2: [
+        "moonwalking", "conga-lining", "sashaying", "high-stepping",
+        "jubilantly backflipping", "gracefully hovering", "skip-hopping",
+        "disco-dancing", "triumphantly cartwheeling", "can-can dancing"
+      ],
+      noun_singular1: [
+        "rubber chicken", "titanium spatula", "flaming bagpipe", "vintage trombone",
+        "laser-guided banana", "enchanted toaster", "vibrating pool noodle",
+        "golden tea kettle", "disco melon", "feather duster of destiny"
+      ],
+      noun_singular2: [
+        "cursed garden gnome", "half-eaten pork pie", "mysterious USB stick",
+        "jar of pickled eggs", "golden saucepan", "oversized novelty foam finger",
+        "disco ball", "stale crumpet", "crystal monocle", "clockwork hedgehog"
+      ],
+      noun_plural1: [
+        "tactical combat squirrels", "flying pancakes", "laser disco drones",
+        "screeching seagulls", "cursed rubber ducks", "angry chihuahuas",
+        "ferocious marshmallows", "runaway shopping trolleys", "rabid hamsters"
+      ],
+      place1: [
+        "the Tesco car park at 2 AM", "an underground cheese bunker in Yorkshire",
+        "the International Space Station", "the Bermuda Triangle", "a bouncy castle in Slough",
+        "the secret basement of Buckingham Palace", "an active volcano in Hawaii",
+        "a haunted Ikea showroom", "the VIP lounge of a pigeon sanctuary"
+      ],
+      food1: [
+        "lukewarm baked beans", "fizzy pickle juice", "garlic-infused custard",
+        "deep-fried haggis", "spicy vindaloo", "marmite-flavored bubblegum",
+        "soggy chip butty", "sparkling turnip cider", "fermented cabbage smoothie"
+      ],
+      body_part: [
+        "left nostril", "majestic chin", "muscular kneecap", "tactical left pinky",
+        "dazzling forehead", "glorious mustache", "iron bellybutton", "hairy clavicle"
+      ],
+      animal: [
+        "screaming possum", "disco pigeon", "disgruntled badger", "miniature capybara",
+        "swaggering seagull", "cyborg llama", "ferocious guinea pig", "ninja wombat"
+      ],
+      exclamation1: [
+        "Holy guacamole!", "By the power of gravy!", "Great flaming crumpets!",
+        "Sweet mother of mac and cheese!", "Bloody marvelous!", "What in the name of biscuits?!",
+        "By Neptune's soggy beard!", "Jumping jellybeans!"
+      ]
+    };
+
+    // Story genres and templates
+    const STORY_TEMPLATES = [
+      {
+        id: "spy",
+        icon: "🕵️‍♂️",
+        title: "The Classified Dossier",
+        tag: "Espionage & Mystery",
+        formatTitle: (w) => `The Top Secret Dossier of LUCAS SALTHOUSE`,
+        generate: (w) => `
+          <p>
+            It was exactly 03:14 hours when the red emergency telephone rang inside 
+            <span class="user-word type-misc" data-type="Place">${w.place1}</span>. 
+            British Intelligence had only one operative reckless, suave, and daring enough to accept the mission: 
+            the living legend known to friend and foe as <span class="protagonist-word">${PROTAGONIST}</span>.
+          </p>
+          <p>
+            Without spilling a single drop of his morning 
+            <span class="user-word type-misc" data-type="Food / Drink">${w.food1}</span>, 
+            <span class="protagonist-word">${PROTAGONIST}</span> strapped on a pair of tactical sunglasses 
+            and seized a <span class="user-word type-adj" data-type="Adjective">${w.adj2}</span> 
+            <span class="user-word type-noun" data-type="Noun">${w.noun_singular1}</span>. 
+            The assignment was utterly <span class="user-word type-adj" data-type="Adjective">${w.adj1}</span>: 
+            a shadowy syndicate threatened to unleash a horde of hostile 
+            <span class="user-word type-noun" data-type="Plural Noun">${w.noun_plural1}</span> upon the civilized world.
+          </p>
+          <p>
+            "Not on my watch," murmured <span class="protagonist-word">${PROTAGONIST}</span>, 
+            wiping sweat from his <span class="user-word type-misc" data-type="Body Part">${w.body_part}</span> with cool confidence. 
+            Suddenly, an enemy operative released an assassin <span class="user-word type-misc" data-type="Animal">${w.animal}</span>! 
+            The creature came <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing1}</span> down the ventilation shaft. 
+            Thinking at supersonic speed, <span class="protagonist-word">${PROTAGONIST}</span> 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past1}</span> over the conference table, 
+            snatched a nearby <span class="user-word type-noun" data-type="Noun">${w.noun_singular2}</span>, and 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past2}</span> it straight into the mainframe computer!
+          </p>
+          <p>
+            "<strong>${w.exclamation1}</strong>" screamed the syndicate leader from the control room as alarms blared. 
+            The day was saved. As helicopters circled overhead, <span class="protagonist-word">${PROTAGONIST}</span> 
+            was spotted <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing2}</span> into the sunrise. 
+            History shall forever honor the <span class="user-word type-adj" data-type="Adjective">${w.adj3}</span> 
+            exploits of secret agent <span class="protagonist-word">${PROTAGONIST}</span>.
+          </p>
+        `
+      },
+      {
+        id: "adventure",
+        icon: "🏺",
+        title: "The Lost Temple",
+        tag: "Ancient Archaeology",
+        formatTitle: (w) => `LUCAS SALTHOUSE and the Lost Temple of the Golden ${w.animal.toUpperCase()}`,
+        generate: (w) => `
+          <p>
+            Deep within the suffocating jungle surrounding 
+            <span class="user-word type-misc" data-type="Place">${w.place1}</span>, 
+            crumbling stone pillars groaned under the weight of a thousand-year-old curse. 
+            Scores of amateur explorers had ventured here and vanished without a trace, 
+            yet none possessed the unyielding swagger of <span class="protagonist-word">${PROTAGONIST}</span>.
+          </p>
+          <p>
+            Brushing cobwebs from his <span class="user-word type-misc" data-type="Body Part">${w.body_part}</span>, 
+            <span class="protagonist-word">${PROTAGONIST}</span> analyzed the carved hieroglyphics. 
+            The ancient prophecy foretold that only a soul of truly 
+            <span class="user-word type-adj" data-type="Adjective">${w.adj1}</span> spirit could reclaim the golden artifact. 
+            Pausing only to enjoy a quick spoonful of dried 
+            <span class="user-word type-misc" data-type="Food / Drink">${w.food1}</span>, 
+            <span class="protagonist-word">${PROTAGONIST}</span> stepped bravely onto the altar floor.
+          </p>
+          <p>
+            <em>CLICK!</em> A hidden pressure plate clicked! Swarms of poisonous 
+            <span class="user-word type-noun" data-type="Plural Noun">${w.noun_plural1}</span> poured from the ceiling! 
+            Without batting an eyelid, <span class="protagonist-word">${PROTAGONIST}</span> 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past1}</span> across the chasm, 
+            brandishing an enchanted <span class="user-word type-adj" data-type="Adjective">${w.adj2}</span> 
+            <span class="user-word type-noun" data-type="Noun">${w.noun_singular1}</span>. 
+            A gargantuan guardian <span class="user-word type-misc" data-type="Animal">${w.animal}</span> barred the exit, 
+            <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing1}</span> with primordial fury. 
+            Undeterred, <span class="protagonist-word">${PROTAGONIST}</span> pulled out a 
+            <span class="user-word type-noun" data-type="Noun">${w.noun_singular2}</span> and 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past2}</span> with precision!
+          </p>
+          <p>
+            "<strong>${w.exclamation1}</strong>" echoed through the cavern walls as the temple collapsed into rubble. 
+            Emerging untouched from the cloud of dust, <span class="protagonist-word">${PROTAGONIST}</span> was seen 
+            <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing2}</span> along the jungle path. 
+            Scholars will sing of the <span class="user-word type-adj" data-type="Adjective">${w.adj3}</span> 
+            courage of <span class="protagonist-word">${PROTAGONIST}</span> for centuries to come.
+          </p>
+        `
+      },
+      {
+        id: "scifi",
+        icon: "🚀",
+        title: "The Starship Odyssey",
+        tag: "Intergalactic Sci-Fi",
+        formatTitle: (w) => `Fleet Admiral LUCAS SALTHOUSE & the Cosmic Nebula`,
+        generate: (w) => `
+          <p>
+            Stardate 49204.3. The star dreadnought <em>Thunderbolt</em> drifted silently in orbit over 
+            <span class="user-word type-misc" data-type="Place">${w.place1}</span>. 
+            On the bridge, one figure commanded absolute respect and cosmic awe: 
+            Fleet Commander <span class="protagonist-word">${PROTAGONIST}</span>.
+          </p>
+          <p>
+            "Admiral!" shouted the junior radar officer, clutching their headset. 
+            "An alien war fleet has jumped out of hyperspace! Their shields appear intensely 
+            <span class="user-word type-adj" data-type="Adjective">${w.adj1}</span>!" 
+            <span class="protagonist-word">${PROTAGONIST}</span> calmly took a sip of zero-gravity 
+            <span class="user-word type-misc" data-type="Food / Drink">${w.food1}</span>, stroked his 
+            <span class="user-word type-misc" data-type="Body Part">${w.body_part}</span>, and announced: 
+            "Arm the photon <span class="user-word type-noun" data-type="Noun">${w.noun_singular1}</span>."
+          </p>
+          <p>
+            The enemy dreadnought retaliated, firing a volley of plasma-charged 
+            <span class="user-word type-noun" data-type="Plural Noun">${w.noun_plural1}</span>. 
+            Sparks showered the deck! While rookie crewmembers panicked, 
+            <span class="protagonist-word">${PROTAGONIST}</span> 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past1}</span> over the central console. 
+            On the main holo-screen appeared the alien emperor—a menacing creature resembling a 
+            <span class="user-word type-adj" data-type="Adjective">${w.adj2}</span> 
+            <span class="user-word type-misc" data-type="Animal">${w.animal}</span>, 
+            which was <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing1}</span> aggressively. 
+            With supreme diplomatic finesse, <span class="protagonist-word">${PROTAGONIST}</span> raised a 
+            <span class="user-word type-noun" data-type="Noun">${w.noun_singular2}</span> and 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past2}</span> it directly into the subspace transmitter!
+          </p>
+          <p>
+            "<strong>${w.exclamation1}</strong>" gasped the alien warlord in utter disbelief. "No mortal could possess such tactical genius!" 
+            The invading fleet retreated at warp factor nine, leaving <span class="protagonist-word">${PROTAGONIST}</span> 
+            <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing2}</span> triumphantly across the bridge. 
+            The cosmos remains safe in the <span class="user-word type-adj" data-type="Adjective">${w.adj3}</span> 
+            hands of <span class="protagonist-word">${PROTAGONIST}</span>.
+          </p>
+        `
+      },
+      {
+        id: "bakeoff",
+        icon: "🧁",
+        title: "The Great Bake-Off",
+        tag: "Culinary Chaos",
+        formatTitle: (w) => `Master Chef LUCAS SALTHOUSE Wins Showstopper Week`,
+        generate: (w) => `
+          <p>
+            The giant marquee pitched in <span class="user-word type-misc" data-type="Place">${w.place1}</span> 
+            hummed with the scent of melted butter, heated rivalry, and palpable tension. 
+            It was the finals of the Great Baking Championship, and all eyes were glued to the most unorthodox baker in history: 
+            <span class="protagonist-word">${PROTAGONIST}</span>.
+          </p>
+          <p>
+            The judges had requested an elegant tart, but <span class="protagonist-word">${PROTAGONIST}</span> 
+            followed his own culinary heartbeat. Donning an apron that was unmistakably 
+            <span class="user-word type-adj" data-type="Adjective">${w.adj1}</span>, 
+            <span class="protagonist-word">${PROTAGONIST}</span> hurled a bowl of 
+            <span class="user-word type-misc" data-type="Food / Drink">${w.food1}</span> straight into the mixer. 
+            "What on earth is that technique?!" gasps the presenter as <span class="protagonist-word">${PROTAGONIST}</span> began 
+            <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing1}</span> with two rolling pins.
+          </p>
+          <p>
+            Disaster struck when a rogue <span class="user-word type-misc" data-type="Animal">${w.animal}</span> 
+            stampeded into the tent, knocking over a tray of hot 
+            <span class="user-word type-noun" data-type="Plural Noun">${w.noun_plural1}</span>! 
+            Without flinching, <span class="protagonist-word">${PROTAGONIST}</span> 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past1}</span> across the kitchen counter, 
+            balanced a <span class="user-word type-adj" data-type="Adjective">${w.adj2}</span> 
+            <span class="user-word type-noun" data-type="Noun">${w.noun_singular1}</span> on his 
+            <span class="user-word type-misc" data-type="Body Part">${w.body_part}</span>, and 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past2}</span> the runaway soufflé into the blast chiller!
+          </p>
+          <p>
+            At judging time, <span class="protagonist-word">${PROTAGONIST}</span> unveiled a masterwork garnished with an edible 
+            <span class="user-word type-noun" data-type="Noun">${w.noun_singular2}</span>. 
+            The lead judge took a cautious bite. 
+            "<strong>${w.exclamation1}</strong>" the judge wept in pure ecstasy. "The sponge is daring, the flavors are chaotic, but it is undeniably 
+            <span class="user-word type-adj" data-type="Adjective">${w.adj3}</span>!" 
+            With the golden trophy hoisted high, <span class="protagonist-word">${PROTAGONIST}</span> was seen 
+            <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing2}</span> out of the tent in glorious triumph!
+          </p>
+        `
+      },
+      {
+        id: "tuesday",
+        icon: "🛒",
+        title: "A Very Peculiar Tuesday",
+        tag: "Absurdist Comedy",
+        formatTitle: (w) => `LUCAS SALTHOUSE Goes to the Shops: A Heroic Tale`,
+        generate: (w) => `
+          <p>
+            All <span class="protagonist-word">${PROTAGONIST}</span> wanted was to step out to 
+            <span class="user-word type-misc" data-type="Place">${w.place1}</span> to pick up a pint of milk. 
+            It was intended to be an ordinary, quiet Tuesday. 
+            However, when your name is <span class="protagonist-word">${PROTAGONIST}</span>, ordinary is simply not on the schedule.
+          </p>
+          <p>
+            The mayhem kicked off at the pedestrian crossing, when a mischievous 
+            <span class="user-word type-misc" data-type="Animal">${w.animal}</span> swooped down and snatched his keys! 
+            Instead of panicking, <span class="protagonist-word">${PROTAGONIST}</span> 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past1}</span> over a row of bicycles, 
+            balancing on his <span class="user-word type-misc" data-type="Body Part">${w.body_part}</span> while 
+            <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing1}</span> past astonished spectators. 
+            A passerby dropped their thermos of <span class="user-word type-misc" data-type="Food / Drink">${w.food1}</span> 
+            and shouted: "Look, is that a stuntman?!" "No," an onlooker whispered in reverence. "That is 
+            <span class="protagonist-word">${PROTAGONIST}</span>!"
+          </p>
+          <p>
+            Before long, an unexpected flash mob broke out, armed with <span class="user-word type-adj" data-type="Adjective">${w.adj1}</span> banners 
+            and juggling dozens of <span class="user-word type-noun" data-type="Plural Noun">${w.noun_plural1}</span>. 
+            Brandishing nothing more than a <span class="user-word type-adj" data-type="Adjective">${w.adj2}</span> 
+            <span class="user-word type-noun" data-type="Noun">${w.noun_singular1}</span>, 
+            <span class="protagonist-word">${PROTAGONIST}</span> leaped into the dance circle, 
+            caught a stray <span class="user-word type-noun" data-type="Noun">${w.noun_singular2}</span> mid-air, and 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past2}</span> to the beat like a seasoned rock star!
+          </p>
+          <p>
+            "<strong>${w.exclamation1}</strong>" roared the crowd as a standing ovation swept the entire street. 
+            With the pint of milk tucked under one arm, <span class="protagonist-word">${PROTAGONIST}</span> 
+            was observed <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing2}</span> peacefully toward home. 
+            Just another casual, <span class="user-word type-adj" data-type="Adjective">${w.adj3}</span> afternoon 
+            in the extraordinary life of <span class="protagonist-word">${PROTAGONIST}</span>.
+          </p>
+        `
+      },
+      {
+        id: "fantasy",
+        icon: "⚔️",
+        title: "The Dragon Slayer",
+        tag: "High Fantasy RPG",
+        formatTitle: (w) => `Lord LUCAS SALTHOUSE and the Ancient Prophecy of Eldoria`,
+        generate: (w) => `
+          <p>
+            In the mythical realm of Eldoria, old bards sang tales of the prophesied hero destined to conquer 
+            the shadow fortress of <span class="user-word type-misc" data-type="Place">${w.place1}</span>. 
+            That valiant paladin was none other than Sir <span class="protagonist-word">${PROTAGONIST}</span>.
+          </p>
+          <p>
+            Adorned in enchanted armor with an unmistakably <span class="user-word type-adj" data-type="Adjective">${w.adj1}</span> gleam, 
+            <span class="protagonist-word">${PROTAGONIST}</span> saddled his legendary battle-<span class="user-word type-misc" data-type="Animal">${w.animal}</span>. 
+            Before crossing the jagged mountains, <span class="protagonist-word">${PROTAGONIST}</span> replenished his stamina with a hearty bowl of 
+            <span class="user-word type-misc" data-type="Food / Drink">${w.food1}</span> and swore an oath upon his 
+            <span class="user-word type-misc" data-type="Body Part">${w.body_part}</span> to defend the realm.
+          </p>
+          <p>
+            As thunder shattered the sky, the Dark Warlock summoned a terrifying legion of 
+            <span class="user-word type-noun" data-type="Plural Noun">${w.noun_plural1}</span>! 
+            Sir <span class="protagonist-word">${PROTAGONIST}</span> did not hesitate for a second. 
+            He <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past1}</span> into the thick of combat, 
+            <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing1}</span> with mythical grace. 
+            Deflecting dark sorcery with his <span class="user-word type-adj" data-type="Adjective">${w.adj2}</span> 
+            <span class="user-word type-noun" data-type="Noun">${w.noun_singular1}</span>, 
+            <span class="protagonist-word">${PROTAGONIST}</span> unsheathed the sacred 
+            <span class="user-word type-noun" data-type="Noun">${w.noun_singular2}</span> and 
+            <span class="user-word type-verb" data-type="Verb (past)">${w.verb_past2}</span> it right into the vortex of doom!
+          </p>
+          <p>
+            "<strong>${w.exclamation1}</strong>" shrieked the dark lord as the fortress dissolved into sparkling dust. 
+            Peace was restored to the seven kingdoms, with townspeople 
+            <span class="user-word type-verb" data-type="Verb (-ing)">${w.verb_ing2}</span> around bonfires well into the night. 
+            All hailed the most <span class="user-word type-adj" data-type="Adjective">${w.adj3}</span> champion in history: 
+            the invincible <span class="protagonist-word">${PROTAGONIST}</span>!
+          </p>
+        `
+      }
+    ];
+
+    /* ==========================================================================
+       2. STATE & AUDIO SYNTHESIS
+       ========================================================================== */
+
+    let selectedGenreId = "spy";
+    let soundEnabled = true;
+    let audioCtx = null;
+    let speechSynth = window.speechSynthesis;
+    let currentUtterance = null;
+    let isPlainReadingMode = false;
+
+    // Web Audio Synthesizer for pleasant tactile feedback (zero external audio files)
+    function playTone(freq, type = "sine", duration = 0.15, gainVal = 0.1) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) audioCtx = new AudioContext();
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // AudioContext not available or blocked
+      }
+    }
+
+    function soundClick() {
+      playTone(480, "triangle", 0.08, 0.08);
+    }
+
+    function soundDice() {
+      playTone(550, "sine", 0.05, 0.05);
+      setTimeout(() => playTone(720, "sine", 0.07, 0.07), 60);
+    }
+
+    function soundFanfare() {
+      if (!soundEnabled) return;
+      playTone(392, "sine", 0.15, 0.1); // G4
+      setTimeout(() => playTone(523.25, "sine", 0.18, 0.12), 120); // C5
+      setTimeout(() => playTone(659.25, "sine", 0.22, 0.12), 240); // E5
+      setTimeout(() => playTone(783.99, "sine", 0.45, 0.15), 380); // G5
+    }
+
+    /* ==========================================================================
+       3. UI INITIALIZATION & GENRE RENDERING
+       ========================================================================== */
+
+    function initGenres() {
+      const container = document.getElementById("genre-container");
+      container.innerHTML = "";
+
+      STORY_TEMPLATES.forEach(tmpl => {
+        const card = document.createElement("div");
+        card.className = `genre-card ${tmpl.id === selectedGenreId ? "active" : ""}`;
+        card.setAttribute("role", "button");
+        card.setAttribute("tabindex", "0");
+        card.dataset.id = tmpl.id;
+        card.innerHTML = `
+          <span class="genre-icon">${tmpl.icon}</span>
+          <span class="genre-name">${tmpl.title}</span>
+          <span class="genre-tag">${tmpl.tag}</span>
+        `;
+        card.onclick = () => selectGenre(tmpl.id);
+        card.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') selectGenre(tmpl.id); };
+        container.appendChild(card);
+      });
+    }
+
+    function selectGenre(id) {
+      selectedGenreId = id;
+      soundClick();
+      document.querySelectorAll(".genre-card").forEach(c => {
+        c.classList.toggle("active", c.dataset.id === id);
+      });
+      // If story is currently visible, update it dynamically!
+      const storySection = document.getElementById("story-output");
+      if (storySection.classList.contains("visible")) {
+        renderStoryContent();
+        showToast("Switched story theme to: " + STORY_TEMPLATES.find(t => t.id === id).title, "🎭");
+      }
+    }
+
+    /* ==========================================================================
+       4. FORM TRACKING & RANDOMIZATION
+       ========================================================================== */
+
+    const ALL_FIELD_IDS = [
+      "adj1", "adj2", "adj3",
+      "verb_past1", "verb_past2", "verb_ing1", "verb_ing2",
+      "noun_singular1", "noun_singular2", "noun_plural1",
+      "place1", "food1", "body_part", "animal", "exclamation1"
+    ];
+
+    function updateProgress() {
+      let filledCount = 0;
+      ALL_FIELD_IDS.forEach(id => {
+        const val = document.getElementById(id).value.trim();
+        if (val) filledCount++;
+      });
+      const pct = Math.round((filledCount / ALL_FIELD_IDS.length) * 100);
+      document.getElementById("progress-bar").style.width = pct + "%";
+      document.getElementById("progress-text").textContent = `${filledCount} / ${ALL_FIELD_IDS.length}`;
+    }
+
+    function randomizeSingleField(fieldId) {
+      soundDice();
+      const list = WORD_BANK[fieldId];
+      if (list && list.length) {
+        const input = document.getElementById(fieldId);
+        const currentVal = input.value.trim();
+        let pick = list[Math.floor(Math.random() * list.length)];
+        // try to avoid repeating the exact same word if possible
+        if (pick === currentVal && list.length > 1) {
+          pick = list[(list.indexOf(pick) + 1) % list.length];
+        }
+        input.value = pick;
+        input.classList.add("flash-field");
+        setTimeout(() => input.classList.remove("flash-field"), 300);
+        updateProgress();
+      }
+    }
+
+    function randomizeAllFields() {
+      soundDice();
+      ALL_FIELD_IDS.forEach(id => {
+        const list = WORD_BANK[id];
+        if (list) {
+          const pick = list[Math.floor(Math.random() * list.length)];
+          document.getElementById(id).value = pick;
+        }
+      });
+      updateProgress();
+      showToast("All 15 words randomly generated!", "🎲");
+    }
+
+    function clearAllFields() {
+      soundClick();
+      ALL_FIELD_IDS.forEach(id => {
+        document.getElementById(id).value = "";
+      });
+      updateProgress();
+      showToast("Cleared all inputs", "🧹");
+    }
+
+    /* ==========================================================================
+       5. STORY GENERATION & RENDERING
+       ========================================================================== */
+
+    function getFormWords() {
+      const words = {};
+      ALL_FIELD_IDS.forEach(id => {
+        const val = document.getElementById(id).value.trim();
+        words[id] = val || (WORD_BANK[id] ? WORD_BANK[id][0] : "something");
+      });
+      return words;
+    }
+
+    function generateStory() {
+      // Validate: make sure at least fields are populated
+      let missingFields = [];
+      ALL_FIELD_IDS.forEach(id => {
+        const val = document.getElementById(id).value.trim();
+        if (!val) missingFields.push(id);
+      });
+
+      if (missingFields.length > 0) {
+        // Auto-fill empty fields if the user clicked generate directly!
+        missingFields.forEach(id => {
+          const list = WORD_BANK[id];
+          if (list) {
+            document.getElementById(id).value = list[Math.floor(Math.random() * list.length)];
+          }
+        });
+        updateProgress();
+        showToast("Auto-filled remaining empty words!", "✨");
+      }
+
+      renderStoryContent();
+
+      const storySection = document.getElementById("story-output");
+      storySection.classList.add("visible");
+      soundFanfare();
+      triggerConfetti();
+
+      // Smooth scroll down to the generated story
+      setTimeout(() => {
+        storySection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+
+    function renderStoryContent() {
+      const words = getFormWords();
+      const tmpl = STORY_TEMPLATES.find(t => t.id === selectedGenreId) || STORY_TEMPLATES[0];
+
+      // Render Title with guaranteed LUCAS SALTHOUSE
+      document.getElementById("story-rendered-title").textContent = tmpl.formatTitle(words);
+      
+      // Render Date
+      const dateStr = new Date().toLocaleDateString(undefined, { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      document.getElementById("story-date").textContent = dateStr;
+
+      // Render Body
+      const bodyEl = document.getElementById("story-rendered-body");
+      bodyEl.innerHTML = tmpl.generate(words);
+
+      // Attach tooltip triggers to inserted words
+      attachWordTooltips();
+    }
+
+    /* ==========================================================================
+       6. INTERACTIVE WORD TOOLTIPS
+       ========================================================================== */
+
+    function attachWordTooltips() {
+      const tooltip = document.getElementById("word-tooltip");
+      const userWords = document.querySelectorAll(".user-word");
+
+      userWords.forEach(span => {
+        span.addEventListener("mouseenter", (e) => {
+          const typeName = span.dataset.type || "Inserted Word";
+          tooltip.textContent = `${typeName}: "${span.textContent}"`;
+          tooltip.style.display = "block";
+          const rect = span.getBoundingClientRect();
+          tooltip.style.left = `${rect.left + window.scrollX + (rect.width / 2) - 50}px`;
+          tooltip.style.top = `${rect.top + window.scrollY - 34}px`;
+        });
+
+        span.addEventListener("mouseleave", () => {
+          tooltip.style.display = "none";
+        });
+      });
+    }
+
+    function togglePlainReadingMode() {
+      soundClick();
+      isPlainReadingMode = !isPlainReadingMode;
+      const parchment = document.getElementById("story-parchment-content");
+      parchment.classList.toggle("plain-reading-mode", isPlainReadingMode);
+      const btn = document.getElementById("toggle-highlights-btn");
+      btn.textContent = isPlainReadingMode ? "🎨 Show Highlights" : "📖 Plain Reading Mode";
+      showToast(isPlainReadingMode ? "Switched to clean book view" : "Highlights enabled", "🎨");
+    }
+
+    function scrollToInputs() {
+      soundClick();
+      document.querySelector(".generator-panel").scrollIntoView({ behavior: "smooth" });
+    }
+
+    /* ==========================================================================
+       7. COPY, DOWNLOAD & SPEECH SYNTHESIS (TTS)
+       ========================================================================== */
+
+    function getStoryPlainText() {
+      const title = document.getElementById("story-rendered-title").textContent;
+      const paragraphs = Array.from(document.querySelectorAll("#story-rendered-body p"))
+        .map(p => p.textContent.trim())
+        .join("\n\n");
+      return `${title.toUpperCase()}\n${"=".repeat(title.length)}\n\n${paragraphs}\n\nStarring: ${PROTAGONIST}\nCertified by The Lucas Salthouse Story Forge`;
+    }
+
+    async function copyStoryText() {
+      soundClick();
+      const text = getStoryPlainText();
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("Story copied to clipboard!", "📋");
+      } catch (err) {
+        // Fallback
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        showToast("Story copied to clipboard!", "📋");
+      }
+    }
+
+    function downloadStoryFile() {
+      soundClick();
+      const text = getStoryPlainText();
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Lucas-Salthouse-${selectedGenreId}-story.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Story file downloaded!", "💾");
+    }
+
+    function toggleReadAloud() {
+      if (!('speechSynthesis' in window)) {
+        showToast("Speech synthesis not supported in this browser.", "⚠️");
+        return;
+      }
+
+      if (speechSynth.speaking) {
+        stopSpeech();
+        return;
+      }
+
+      const text = getStoryPlainText();
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = 1.0;
+      currentUtterance.pitch = 1.0;
+
+      const ttsStatus = document.getElementById("tts-status");
+      const ttsBtn = document.getElementById("tts-btn");
+
+      currentUtterance.onstart = () => {
+        ttsStatus.classList.add("active");
+        ttsBtn.textContent = "⏸️ Pause Narration";
+      };
+
+      currentUtterance.onend = () => {
+        stopSpeech();
+      };
+
+      currentUtterance.onerror = () => {
+        stopSpeech();
+      };
+
+      speechSynth.speak(currentUtterance);
+    }
+
+    function stopSpeech() {
+      if (speechSynth) {
+        speechSynth.cancel();
+      }
+      const ttsStatus = document.getElementById("tts-status");
+      const ttsBtn = document.getElementById("tts-btn");
+      ttsStatus.classList.remove("active");
+      ttsBtn.textContent = "🔊 Read Aloud";
+    }
+
+    /* ==========================================================================
+       8. CELEBRATION CONFETTI (Custom zero-dependency Canvas Engine)
+       ========================================================================== */
+
+    function triggerConfetti() {
+      const canvas = document.getElementById("confetti-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ["#f59e0b", "#fbbf24", "#10b981", "#3b82f6", "#ec4899", "#8b5cf6", "#f97316"];
+      const particles = [];
+      const particleCount = 120;
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+          y: canvas.height * 0.4 + (Math.random() - 0.5) * 100,
+          vx: (Math.random() - 0.5) * 16,
+          vy: (Math.random() - 0.7) * 18 - 4,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rSpeed: (Math.random() - 0.5) * 10,
+          gravity: 0.35,
+          alpha: 1,
+          decay: Math.random() * 0.015 + 0.008
+        });
+      }
+
+      let animationId;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let activeParticles = 0;
+
+        for (let p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.rotation += p.rSpeed;
+          p.alpha -= p.decay;
+
+          if (p.alpha > 0) {
+            activeParticles++;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            ctx.restore();
+          }
+        }
+
+        if (activeParticles > 0) {
+          animationId = requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          cancelAnimationFrame(animationId);
+        }
+      }
+
+      animate();
+    }
+
+    /* ==========================================================================
+       9. THEME & TOAST NOTIFICATION
+       ========================================================================== */
+
+    let currentTheme = "midnight";
+
+    function toggleTheme() {
+      soundClick();
+      currentTheme = currentTheme === "midnight" ? "parchment" : "midnight";
+      if (currentTheme === "parchment") {
+        document.documentElement.setAttribute("data-theme", "parchment");
+        document.getElementById("toggle-theme-btn").textContent = "☀️";
+        showToast("Theme: Vintage Parchment", "📜");
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+        document.getElementById("toggle-theme-btn").textContent = "🌓";
+        showToast("Theme: Midnight Dossier", "🌙");
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById("toggle-sound-btn").textContent = soundEnabled ? "🔊" : "🔇";
+      showToast(soundEnabled ? "Sound Effects ON" : "Sound Muted", soundEnabled ? "🔊" : "🔇");
+      if (soundEnabled) soundClick();
+    }
+
+    let toastTimer;
+    function showToast(message, icon = "✨") {
+      const toast = document.getElementById("toast");
+      document.getElementById("toast-msg").textContent = message;
+      document.getElementById("toast-icon").textContent = icon;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2400);
+    }
+
+    /* ==========================================================================
+       10. EVENT LISTENERS SETUP
+       ========================================================================== */
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initGenres();
+
+      document.getElementById("btn-randomize-all").onclick = randomizeAllFields;
+      document.getElementById("btn-clear-all").onclick = clearAllFields;
+      document.getElementById("toggle-theme-btn").onclick = toggleTheme;
+      document.getElementById("toggle-sound-btn").onclick = toggleSound;
+
+      // Track input changes
+      ALL_FIELD_IDS.forEach(id => {
+        const input = document.getElementById(id);
+        input.addEventListener("input", updateProgress);
+      });
+
+      // Quick auto-populate 3 random starter words to invite curiosity
+      randomizeSingleField("adj1");
+      randomizeSingleField("verb_past1");
+      randomizeSingleField("noun_singular1");
+      updateProgress();
+    });
+
+    window.addEventListener("resize", () => {
+      const canvas = document.getElementById("confetti-canvas");
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    });
+  </script>
+</body>
+</html>
